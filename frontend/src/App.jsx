@@ -15,6 +15,7 @@ const App = () => {
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
+    setEditText(event.target.value);
   };
 
   const handleAddTodo = async () => {
@@ -35,15 +36,19 @@ const App = () => {
       // Get contract instance
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
-      // Send transaction to add new todo
-      const TX = await contract.addNewTodo(inputValue);
-      await TX.wait();
+      if (editIndex !== -1) {
+        handleUpdateTodo(editIndex, inputValue);
+      } else {
+        // Send transaction to add new todo
+        const TX = await contract.addNewTodo(inputValue);
+        await TX.wait();
 
-      console.log("Todo created successfully :)");
+        console.log("Todo created successfully :)");
 
-      updateTodoStates();
+        updateTodoStates();
 
-      setInputValue("");
+        setInputValue("");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -131,7 +136,17 @@ const App = () => {
     }
   };
 
-  const handleUpdateTodo = async (index, newText) => {
+  const handleEditTodo = (index) => {
+    const todo = todos[index];
+
+    setEditIndex(index);
+    setEditText(todo.text);
+    setInputValue(todo.text);
+
+    handleUpdateTodo(editIndex, editText);
+  };
+
+  const handleUpdateTodo = async (index, newText = "") => {
     try {
       // Check if wallet is connected
       if (!isWalletConnected) {
@@ -139,17 +154,25 @@ const App = () => {
         return;
       }
 
-      // Connect to the contract
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
+      let provider = new ethers.providers.Web3Provider(window.ethereum);
+      let signer = provider.getSigner();
+
+      // Load the contract
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       // Send the transaction to update the todo text
-      const tx = await contract.updateTodoText(index, newText);
-      await tx.wait();
+      const TX = await contract.updateTodoText(index, newText);
+      await TX.wait();
 
-      // Update the state to reflect the updated todo
-      const updatedTodos = [...todos];
-      updatedTodos[index] = newText;
-      setTodos(updatedTodos);
+      console.log("Todo updated successfully :)");
+
+      // updateStates
+      updateTodoStates();
+
+      // resetEditingStates
+      setEditIndex(-1);
+      setEditText("");
+      setInputValue("");
     } catch (error) {
       console.error(error);
     }
@@ -178,11 +201,11 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    if (isWalletConnected) {
-      connectMetamask();
-    }
-  }, [isWalletConnected]);
+  // useEffect(() => {
+  //   if (isWalletConnected) {
+  //     connectMetamask();
+  //   }
+  // }, [isWalletConnected]);
 
   return (
     <>
@@ -196,10 +219,13 @@ const App = () => {
           <input
             type="text"
             placeholder="Add a new todo here ..."
-            value={inputValue}
+            value={editIndex !== -1 ? editText : inputValue}
             onChange={handleInputChange}
           />
-          <button onClick={handleAddTodo}>Add New Todo</button>
+          <button onClick={handleAddTodo}>
+            {" "}
+            {editIndex !== -1 ? "Update Todo" : "Add New Todo"}
+          </button>
         </div>
 
         <div className="display_block">
@@ -219,7 +245,7 @@ const App = () => {
                       <button onClick={() => handleDeleteTodo(index)}>
                         Delete
                       </button>
-                      <button onClick={() => handleUpdateTodo(index)}>
+                      <button onClick={() => handleEditTodo(index)}>
                         Edit
                       </button>
                       <button onClick={() => handleCompleteTodo(index)}>
