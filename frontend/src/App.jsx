@@ -13,11 +13,13 @@ const App = () => {
 
   const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
+  //  function : handleAnyChangeAnyInputFeild
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
     setEditText(event.target.value);
   };
 
+  // function : addANewTodo
   const handleAddTodo = async () => {
     if (!isWalletConnected) {
       alert("Please connect your Metamask wallet to proceed :)");
@@ -30,10 +32,8 @@ const App = () => {
     }
 
     try {
-      // Get signer
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();
-      // Get contract instance
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       if (editIndex !== -1) {
@@ -54,12 +54,11 @@ const App = () => {
     }
   };
 
+  // fucntion : deleteATodo
   const handleDeleteTodo = async (index) => {
     try {
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();
-
-      // Load the contract
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       // Call the deleteTodo function on the contract
@@ -74,7 +73,7 @@ const App = () => {
     }
   };
 
-  // functionToMarkTodoAsComplete
+  // function : toMarkTodoAsComplete
   const handleCompleteTodo = async (index) => {
     try {
       // checkIfTodoIsAlreadyMarkedAsFinished?
@@ -93,9 +92,6 @@ const App = () => {
 
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();
-      const address = await signer.getAddress();
-
-      // Get contract instance
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       // Call the markTodoAsCompleted function in the contract
@@ -110,6 +106,7 @@ const App = () => {
     }
   };
 
+  // function : toConnectToMetamaskWallet
   const connectMetamask = async () => {
     // Check if MetaMask is installed
     if (typeof window.ethereum === "undefined") {
@@ -136,6 +133,7 @@ const App = () => {
     }
   };
 
+  // function : toEditATodo
   const handleEditTodo = (index) => {
     const todo = todos[index];
 
@@ -146,6 +144,7 @@ const App = () => {
     handleUpdateTodo(editIndex, editText);
   };
 
+  // function : toEditATodo
   const handleUpdateTodo = async (index, newText = "") => {
     try {
       // Check if wallet is connected
@@ -156,8 +155,6 @@ const App = () => {
 
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();
-
-      // Load the contract
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       // Send the transaction to update the todo text
@@ -178,12 +175,11 @@ const App = () => {
     }
   };
 
+  // function : toSyncTodoListWithTheOneAvailableOnTheChain
   const updateTodoStates = async () => {
     try {
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner();
-
-      // Load the contract
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
 
       // Update the list of todos by calling the viewTodos function on the contract
