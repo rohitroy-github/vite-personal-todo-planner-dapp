@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {ethers} from "ethers";
 import "./style.css";
 import {abi} from "../../backend/artifacts/contracts/Todo_Contract.sol/Todo_Contract.json";
+// import {abi} from "../../backend/artifacts/contracts/Todo_Owner_Contract.sol/Todo_Owner_Contract.json";
 
 const App = () => {
   const [todos, setTodos] = useState([]);
@@ -11,7 +12,7 @@ const App = () => {
   const [editIndex, setEditIndex] = useState(-1);
   const [editText, setEditText] = useState("");
 
-  const CONTRACT_ADDRESS = "0x0165878A594ca255338adfa4d48449f69242Eb8F";
+  const CONTRACT_ADDRESS = "0x40f89Ed2b0bc1D6594f883c687D9d636494a501A";
 
   //  function : handleAnyChangeAnyInputFeild
   const handleInputChange = (event) => {
