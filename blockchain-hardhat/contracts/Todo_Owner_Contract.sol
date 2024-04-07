@@ -1,54 +1,54 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 contract Todo_Owner_Contract {
+    address public contractOwner;
+    string public contractName;
+
     struct Todo {
         string text;
         bool isCompleted;
     }
-    mapping(address => Todo[]) private todosByOwner;
-    address public owner;
 
-    modifier onlyOwner() {
-        require(
-            msg.sender == owner,
-            "Only the contract owner can perform this action."
-        );
+    mapping(address => Todo[]) private todosByOwner;
+
+    constructor() {
+        contractName = "Todo_Owner_Contract";
+        contractOwner = msg.sender;
+    }
+
+    modifier onlyOwner(address _owner, uint256 _index) {
+        require(_index < todosByOwner[_owner].length, "Invalid index");
         _;
     }
 
-    constructor() {
-        owner = msg.sender;
-    }
-
-    function addNewTodo(string memory _text) public onlyOwner {
+    function addNewTodo(string memory _text) public {
         Todo memory newTodo = Todo({text: _text, isCompleted: false});
-        todosByOwner[owner].push(newTodo);
+        todosByOwner[msg.sender].push(newTodo);
     }
 
     function updateTodoText(
         uint256 _index,
         string memory _newText
-    ) public onlyOwner {
-        require(_index < todosByOwner[owner].length, "Invalid index");
-        todosByOwner[owner][_index].text = _newText;
+    ) public onlyOwner(msg.sender, _index) {
+        todosByOwner[msg.sender][_index].text = _newText;
     }
 
-    function markTodoAsCompleted(uint256 _index) public onlyOwner {
-        require(_index < todosByOwner[owner].length, "Invalid index");
-        todosByOwner[owner][_index].isCompleted = true;
+    function markTodoAsCompleted(
+        uint256 _index
+    ) public onlyOwner(msg.sender, _index) {
+        todosByOwner[msg.sender][_index].isCompleted = true;
     }
 
-    function deleteTodo(uint256 _index) public onlyOwner {
-        require(_index < todosByOwner[owner].length, "Invalid index");
-        todosByOwner[owner][_index] = todosByOwner[owner][
-            todosByOwner[owner].length - 1
-        ];
-        todosByOwner[owner].pop();
+    function deleteTodo(uint256 _index) public onlyOwner(msg.sender, _index) {
+        uint256 lastIndex = todosByOwner[msg.sender].length - 1;
+        todosByOwner[msg.sender][_index] = todosByOwner[msg.sender][lastIndex];
+        todosByOwner[msg.sender].pop();
     }
 
     function viewTodos() public view returns (string[] memory, bool[] memory) {
         Todo[] memory todos = todosByOwner[msg.sender];
+
         string[] memory todoTexts = new string[](todos.length);
         bool[] memory todoCompleted = new bool[](todos.length);
 
