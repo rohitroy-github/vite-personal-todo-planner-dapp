@@ -2,7 +2,7 @@
 
 <b>This is a decentralized day-to-day todo planning application made using ViteJS.</b>
 
-Currently, the app is working on localhost using <b>Sepolia test network</b> and Alchemy. 
+Currently, the app is working on localhost using <b>Sepolia test network</b> and Alchemy.
 
 <b>Snapshots from the project : </b>
 
@@ -13,6 +13,7 @@ Currently, the app is working on localhost using <b>Sepolia test network</b> and
 <b>Tech Stack :</b>
 
 <b>Frontend :</b>
+
 <ul>
     <li>Vite JS</li>
 </ul>

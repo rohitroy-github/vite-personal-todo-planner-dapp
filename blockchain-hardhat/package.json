@@ -1,5 +1,8 @@
 {
-  "name": "vite-todo-planner-dapp",
+  "name": "vite-todo-planner-dapp-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
@@ -13,5 +16,11 @@
   },
   "dependencies": {
     "dotenv": "^14.2.0"
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

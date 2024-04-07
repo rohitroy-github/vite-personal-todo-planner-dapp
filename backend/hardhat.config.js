@@ -17,6 +17,8 @@ module.exports = {
       // url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
       url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
 
+
+"https://eth-sepolia.g.alchemy.com/v2/wl90oRcCR6MmZCz64cEAEh-fO7hUJpqT"
       // rhtry@dev
       accounts: [`0x${process.env.SEPOLIA_ACCOUNT_PRIVATE_KEY}`],
       chainId: 11155111,
