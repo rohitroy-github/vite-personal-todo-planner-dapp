@@ -1,18 +1,14 @@
 import React, {useState, useEffect} from "react";
-
 import {ethers} from "ethers";
-import {abi} from "../../blockchain-hardhat/artifacts/contracts/Todo_Contract.sol/Todo_Contract.json";
-
+import {abi} from "../../blockchain-hardhat/artifacts/contracts/Todo_Owner_Contract.sol/Todo_Owner_Contract.json";
 import config from "./backend-config.json";
 
-const App = () => {
+const App2 = () => {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
-
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
 
@@ -39,64 +35,56 @@ const App = () => {
     };
 
     fetchContractDetails();
+
+    // Add event listener for Metamask account change
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+
+    return () => {
+      // Cleanup event listener
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+    };
   }, []);
 
-  // function : toConnectToMetamaskWallet
+  const handleAccountsChanged = async (accounts) => {
+    setIsWalletConnected(accounts.length > 0);
+    updateTodoStates();
+  };
+
   const connectMetamask = async () => {
-    // Check if MetaMask is installed
-    if (typeof window.ethereum === "undefined") {
-      alert("Please connect your Metamask wallet to proceed :)");
-      return;
-    }
-
     try {
-      // Connect to Ethereum network
-      let signer = provider.getSigner();
-      // MetaMask requires requesting permission to connect users accounts
-      await provider.send("eth_requestAccounts", []);
-
-      // Get signer address
-      const address = await signer.getAddress();
-
-      // stateUpdation
+      if (typeof window.ethereum === "undefined") {
+        throw new Error("MetaMask is not installed.");
+      }
+      await window.ethereum.request({method: "eth_requestAccounts"});
       setIsWalletConnected(true);
-
       updateTodoStates();
     } catch (error) {
       console.error(error);
     }
   };
 
-  //  function : handleAnyChangeAnyInputFeild
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
     setEditText(event.target.value);
   };
 
-  // function : addANewTodo
   const handleAddTodo = async () => {
-    if (!isWalletConnected) {
-      alert("Please connect your Metamask wallet to proceed :)");
-      return;
-    }
-
-    if (inputValue === "") {
-      alert("Please enter a valid todo item :)");
-      return;
-    }
-
     try {
+      if (!isWalletConnected) {
+        throw new Error("Please connect your Metamask wallet to proceed.");
+      }
+      if (inputValue === "") {
+        throw new Error("Please enter a valid todo item.");
+      }
       if (editIndex !== null) {
-        handleUpdateTodo(editIndex, inputValue);
+        await handleUpdateTodo(editIndex, inputValue);
       } else {
-        // Send transaction to add new todo
-        const TX = await contract.addNewTodo(inputValue);
+        const TX = await contract
+          .connect(provider.getSigner())
+          .addNewTodo(inputValue);
         await TX.wait();
 
-        // console.log("Todo created successfully :)");
-
         updateTodoStates();
-
         setInputValue("");
       }
     } catch (error) {
@@ -104,79 +92,57 @@ const App = () => {
     }
   };
 
-  // fucntion : deleteATodo
   const handleDeleteTodo = async (index) => {
     try {
-      // Call the deleteTodo function on the contract
-      const TX = await contract.deleteTodo(index);
+      if (!isWalletConnected) {
+        throw new Error("Please connect your Metamask wallet to proceed.");
+      }
+      const TX = await contract.connect(provider.getSigner()).deleteTodo(index);
       await TX.wait();
-
-      // console.log("Todo deleted successfully :)");
-
       updateTodoStates();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // function : toMarkTodoAsComplete
   const handleCompleteTodo = async (index) => {
     try {
-      // checkIfTodoIsAlreadyMarkedAsFinished?
+      if (!isWalletConnected) {
+        throw new Error("Please connect your Metamask wallet to proceed.");
+      }
       if (todos[index].isCompleted) {
-        alert(
-          "This todo is already marked as finished, you can delete it if you want :)"
-        );
-        return;
+        throw new Error("This todo is already marked as finished.");
       }
-
-      // Check if MetaMask is installed
-      if (typeof window.ethereum === "undefined") {
-        alert("Please connect your Metamask wallet to proceed :)");
-        return;
-      }
-
-      // Call the markTodoAsCompleted function in the contract
-      const TX = await contract.markTodoAsCompleted(index);
+      const TX = await contract
+        .connect(provider.getSigner())
+        .markTodoAsCompleted(index);
       await TX.wait();
-
-      // console.log("Todo marked as finished :)");
-
       updateTodoStates();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // function : toEditATodo
   const handleEditTodo = (index) => {
     const todo = todos[index];
-
     setEditIndex(index);
     setEditText(todo.text);
     setInputValue(todo.text);
   };
 
-  // function : toUpdateATodo
   const handleUpdateTodo = async (index, newText = "") => {
     try {
-      // Check if wallet is connected
       if (!isWalletConnected) {
-        alert("Please connect your Metamask wallet to proceed :)");
-        return;
+        throw new Error("Please connect your Metamask wallet to proceed.");
       }
-
       if (editText === todos[editIndex].text) {
-        alert("Please update the todo to continue !");
-        return;
+        throw new Error("Please update the todo to continue.");
       }
-
-      const TX = await contract.updateTodoText(index, newText);
+      const TX = await contract
+        .connect(provider.getSigner())
+        .updateTodoText(index, newText);
       await TX.wait();
-
       updateTodoStates();
-
-      // resettingStatesToInitialValues
       setEditIndex(null);
       setEditText("");
       setInputValue("");
@@ -185,16 +151,16 @@ const App = () => {
     }
   };
 
-  // function : toSyncTodoListWithTheOneAvailableOnTheChain
   const updateTodoStates = async () => {
     try {
+      if (!contract || !provider) {
+        throw new Error("Contract or provider not available.");
+      }
       const [todoTexts, todoCompleted] = await contract.viewTodos();
-
       const newTodos = todoTexts.map((text, i) => ({
         text,
         isCompleted: todoCompleted[i],
       }));
-
       setTodos(newTodos);
     } catch (error) {
       console.error(error);
@@ -220,7 +186,7 @@ const App = () => {
             <button
               type="button"
               className={`bg-blue-500 text-white py-2 px-4 rounded-md w-full font-montserrat ${
-                isWalletConnected ? "opacity-80 cursor-not-allowed" : ""
+                isWalletConnected ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={connectMetamask}
               disabled={isWalletConnected}
@@ -244,7 +210,7 @@ const App = () => {
               <button
                 onClick={handleAddTodo}
                 className={`bg-blue-500 text-white py-2 px-4 rounded-md w-full font-montserrat text-sm md:text-base ${
-                  !isWalletConnected ? "opacity-80 cursor-not-allowed" : ""
+                  !isWalletConnected ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 disabled={!isWalletConnected}
               >
@@ -255,15 +221,11 @@ const App = () => {
 
           <div className="overflow-auto w-full font-montserrat">
             {todos.length === 0 ? (
-              isWalletConnected ? (
-                <p className="text-white text-center text-sm">
-                  Oops, you don't have any listed todos available :(
-                </p>
-              ) : (
-                <p className="text-white text-center text-sm">
-                  Please connect your Metmask wallet to manage your todos :)
-                </p>
-              )
+              <p className="text-white text-center text-sm">
+                {isWalletConnected
+                  ? "Oops, you don't have any listed todos available."
+                  : "Please connect your Metamask wallet to manage your todos."}
+              </p>
             ) : (
               <ol className="flex flex-col">
                 {todos.map((todo, index) => (
@@ -313,4 +275,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App2;
