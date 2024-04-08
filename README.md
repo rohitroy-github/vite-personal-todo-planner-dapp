@@ -38,12 +38,15 @@ Create a new .env file inside [blockchain-hardhat] folder taking reference from 
 Terminal 1:
 
 <ul>
+    <li>Run (Move inside [blockchain-hardhat] folder) : <b>cd blockchain-hardhat</b></li>
     <li>Run (Running Hardhat node locally) : <b>npx hardhat node</b></li>
+
 </ul>
 
 Terminal 2:
 
 <ul>
+    <li>Run (Move inside [blockchain-hardhat] folder) : <b>cd blockchain-hardhat</b></li>
     <li>Run (Running tests) : <b>npx hardhat test</b></li>
     <li>Run (Running deployment script) : <b>npx hardhat run scripts/deploy[Todo_Contract_Main].js --network localhost</b></li>
 </ul>
@@ -55,6 +58,7 @@ Update the <b>[backend-config.json]</b> file with the updated contract-address u
 Terminal 1:
 
 <ul>
+    <li>Run (Move inside [frontend-vite] folder) : <b>cd frontend-vite</b></li>
     <li>Run (Running frontend on browser): <b>npm run dev</b></li>
 </ul>
 
