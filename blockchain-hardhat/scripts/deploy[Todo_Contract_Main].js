@@ -44,3 +44,4 @@ main().catch((error) => {
 });
 
 // run >>> npx hardhat run scripts/deploy[Todo_Contract_Main].js --network localhost
+// run >>> npx hardhat run scripts/deploy[Todo_Contract_Main].js --network sepolia
