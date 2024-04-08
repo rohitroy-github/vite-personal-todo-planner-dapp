@@ -46,6 +46,7 @@ Terminal 2:
 <ul>
     <li>Run (Running tests) : <b>npx hardhat test</b></li>
     <li>Run (Running deployment script) : <b>npx hardhat run scripts/deploy[Todo_Contract_Main].js --network localhost</b></li>
+    <li>Update the <b>[backend-config.json]</b> file with the updated contract-address under <b>"31337"</b> "address" feild</li>
 </ul>
 
 <b>Frontend :</b>
