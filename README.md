@@ -29,6 +29,10 @@ Currently, the app is working on localhost using <b>Sepolia</b> test network and
 
 <h3><b>Guide for testing on local hardhat network :</b></h3>
 
+<b>Environment variables :</b>
+
+Create a new .env file inside [blockchain-hardhat] taking reference from .env.example file inside the same.
+
 <b>Backend :</b>
 
 Terminal 1:
