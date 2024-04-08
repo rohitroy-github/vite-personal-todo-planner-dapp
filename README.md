@@ -31,7 +31,7 @@ Currently, the app is working on localhost using <b>Sepolia</b> test network and
 
 <b>Environment variables :</b>
 
-Create a new .env file inside [blockchain-hardhat] taking reference from .env.example file inside the same.
+Create a new .env file inside [blockchain-hardhat] folder taking reference from .env.example file inside the same.
 
 <b>Backend :</b>
 
