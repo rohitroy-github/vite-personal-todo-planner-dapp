@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {ethers} from "ethers";
-import {abi} from "../../blockchain-hardhat/artifacts/contracts/Todo_Owner_Contract.sol/Todo_Owner_Contract.json";
+import {abi} from "../../blockchain-hardhat/artifacts/contracts/Todo_Contract_Main.sol/Todo_Contract_Main.json";
 import config from "./backend-config.json";
+import {shortenWalletAddress} from "./utils";
 
 const App2 = () => {
   const [todos, setTodos] = useState([]);
@@ -11,6 +12,7 @@ const App2 = () => {
   const [editText, setEditText] = useState("");
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
+  const [walletAddress, setWalletAddress] = useState("");
 
   useEffect(() => {
     const fetchContractDetails = async () => {
@@ -23,6 +25,10 @@ const App2 = () => {
           config[connectedNetwork.chainId].contract.address;
 
         const getSigner = getProvider.getSigner();
+
+        const walletAddress = await getSigner.getAddress();
+        setWalletAddress(walletAddress);
+
         const getContract = new ethers.Contract(
           getContractAddress,
           abi,
@@ -191,7 +197,9 @@ const App2 = () => {
               onClick={connectMetamask}
               disabled={isWalletConnected}
             >
-              {isWalletConnected ? "Wallet Connected" : "Connect Wallet"}
+              {isWalletConnected
+                ? `Wallet Connected : ${shortenWalletAddress(walletAddress)}`
+                : "Connect Wallet"}
             </button>
           </div>
 

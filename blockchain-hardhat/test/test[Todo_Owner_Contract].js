@@ -2,17 +2,17 @@
 const {ethers} = require("hardhat");
 const {assert, expect} = require("chai");
 
-describe("Todo_Owner_Contract", function () {
+describe("Todo_Contract_Main", function () {
   let todoContract;
   let owner;
   const todoText = "Test Todo";
 
   beforeEach(async function () {
     // Deploy the contract before each test
-    const Todo_Owner_Contract = await ethers.getContractFactory(
-      "Todo_Owner_Contract"
+    const Todo_Contract_Main = await ethers.getContractFactory(
+      "Todo_Contract_Main"
     );
-    todoContract = await Todo_Owner_Contract.deploy();
+    todoContract = await Todo_Contract_Main.deploy();
     await todoContract.deployed();
 
     // Get the owner address
@@ -27,7 +27,7 @@ describe("Todo_Owner_Contract", function () {
     // Check if the contract name and owner are set correctly
     assert.equal(
       deployedName,
-      "Todo_Owner_Contract",
+      "Todo_Contract_Main",
       "Contract name not set correctly"
     );
     assert.equal(

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-contract Todo_Owner_Contract {
+contract Todo_Contract_Main {
     address public contractOwner;
     string public contractName;
 
@@ -13,7 +13,7 @@ contract Todo_Owner_Contract {
     mapping(address => Todo[]) private todosByOwner;
 
     constructor() {
-        contractName = "Todo_Owner_Contract";
+        contractName = "Todo_Contract_Main";
         contractOwner = msg.sender;
     }
 
