@@ -15,8 +15,8 @@ async function main() {
       "Waiting for block confirmations on Sepolia testnet ... \u23F3"
     );
     // wait6BlockConfirmations
-    await eVaultMain.deployTransaction.wait(6);
-    await verify(eVaultMain.address, []);
+    await todoContract.deployTransaction.wait(6);
+    await verify(todoContract.address, []);
   } else if (network.config.chainId === 31337) {
     console.log("Contract deployed to: Hardhat local environment \u2705");
   }

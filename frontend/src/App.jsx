@@ -14,32 +14,32 @@ const App2 = () => {
   const [contract, setContract] = useState(null);
   const [walletAddress, setWalletAddress] = useState("");
 
+  const fetchContractDetails = async () => {
+    try {
+      const getProvider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(getProvider);
+
+      const connectedNetwork = await getProvider.getNetwork();
+      const getContractAddress =
+        config[connectedNetwork.chainId].contract.address;
+
+      const getSigner = getProvider.getSigner();
+
+      const walletAddress = await getSigner.getAddress();
+      setWalletAddress(walletAddress);
+
+      const getContract = new ethers.Contract(
+        getContractAddress,
+        abi,
+        getSigner
+      );
+      setContract(getContract);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchContractDetails = async () => {
-      try {
-        const getProvider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(getProvider);
-
-        const connectedNetwork = await getProvider.getNetwork();
-        const getContractAddress =
-          config[connectedNetwork.chainId].contract.address;
-
-        const getSigner = getProvider.getSigner();
-
-        const walletAddress = await getSigner.getAddress();
-        setWalletAddress(walletAddress);
-
-        const getContract = new ethers.Contract(
-          getContractAddress,
-          abi,
-          getSigner
-        );
-        setContract(getContract);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchContractDetails();
 
     // Add event listener for Metamask account change
@@ -49,7 +49,7 @@ const App2 = () => {
       // Cleanup event listener
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  }, []);
+  }, [walletAddress]);
 
   const handleAccountsChanged = async (accounts) => {
     setIsWalletConnected(accounts.length > 0);
@@ -159,7 +159,7 @@ const App2 = () => {
 
   const updateTodoStates = async () => {
     try {
-      if (!contract || !provider) {
+      if (!contract && !provider) {
         throw new Error("Contract or provider not available.");
       }
       const [todoTexts, todoCompleted] = await contract.viewTodos();
