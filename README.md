@@ -62,4 +62,4 @@ Terminal 1:
     <li>Run (Running frontend on browser): <b>npm run dev</b></li>
 </ul>
 
-The project is complete but I'm making constant modifications to the project.
+The project is complete but I'm making constant modifications to the project. Please don't forget to put a /U+1F31F if you like the project.
