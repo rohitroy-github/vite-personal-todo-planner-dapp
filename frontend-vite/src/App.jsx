@@ -31,7 +31,7 @@ const App2 = () => {
       const getContract = new ethers.Contract(
         getContractAddress,
         abi,
-        getSigner
+        getSigner,
       );
       setContract(getContract);
     } catch (error) {
